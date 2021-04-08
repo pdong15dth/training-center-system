@@ -1,3 +1,6 @@
 .toast-container {
   z-index: 9999;
 }
+.profile_info .profile_info_iner {
+  border: 1px solid;
+}

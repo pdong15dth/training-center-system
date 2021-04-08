@@ -30,6 +30,7 @@ export default class MyDocument extends Document {
             href="/css/colors/default.css"
             id="colorSkinCSS"
           />
+          <link rel="stylesheet" href="/css/custom.css"/>
         </Head>
         <body className="crm_body_bg">
           <Main />
@@ -46,15 +47,15 @@ export default class MyDocument extends Document {
           <script src="/js/metisMenu.js"></script>
 
           {/* <!-- responsive table --> */}
-          <script src="vendors/datatable/js/jquery.dataTables.min.js"></script>
-          <script src="vendors/datatable/js/dataTables.responsive.min.js"></script>
-          <script src="vendors/datatable/js/dataTables.buttons.min.js"></script>
-          <script src="vendors/datatable/js/buttons.flash.min.js"></script>
-          <script src="vendors/datatable/js/jszip.min.js"></script>
-          <script src="vendors/datatable/js/pdfmake.min.js"></script>
-          <script src="vendors/datatable/js/vfs_fonts.js"></script>
-          <script src="vendors/datatable/js/buttons.html5.min.js"></script>
-          <script src="vendors/datatable/js/buttons.print.min.js"></script>
+          <script src="/vendors/datatable/js/jquery.dataTables.min.js"></script>
+          <script src="/vendors/datatable/js/dataTables.responsive.min.js"></script>
+          <script src="/vendors/datatable/js/dataTables.buttons.min.js"></script>
+          <script src="/vendors/datatable/js/buttons.flash.min.js"></script>
+          <script src="/vendors/datatable/js/jszip.min.js"></script>
+          <script src="/vendors/datatable/js/pdfmake.min.js"></script>
+          <script src="/vendors/datatable/js/vfs_fonts.js"></script>
+          <script src="/vendors/datatable/js/buttons.html5.min.js"></script>
+          <script src="/vendors/datatable/js/buttons.print.min.js"></script>
           {/* <!-- scrollabe  --> */}
           <script src="/vendors/scroll/perfect-scrollbar.min.js"></script>
           <script src="/vendors/scroll/scrollable-custom.js"></script>

@@ -89,7 +89,6 @@ class UserRequestService {
   //End API Information
   // https://api.hellobugs.dev/api/user/upload/ck
   uploadFile(data) {
-    console.log(data);
     const uri = "https://api.hellobugs.dev/api/user/upload/ck";
     axiosService.setContentType("multipart/form-data");
     return axiosService.postMethod(uri, data);
