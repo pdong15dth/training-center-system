@@ -30,6 +30,13 @@ class AdminRequestService {
     const uri = "admin/phong/view/account";
     return axiosService.getMethod(uri);
   }
+
+  //Create account
+  //{{url}}/api/admin/signup
+  createAccount(data) {
+    const uri = "admin/signup";
+    return axiosService.postMethod(uri, data);
+  }
 }
 
 const adminReqService = new AdminRequestService();

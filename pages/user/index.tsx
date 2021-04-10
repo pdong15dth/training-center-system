@@ -6,11 +6,13 @@ import AdminTemplate from "../../src/containers/AdminTemplate";
 import adminReqService from "../../src/services/adminService/admin.request.service";
 import { toast } from "react-nextjs-toast";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function index() {
   const [listUser, setlistUser] = useState(null);
   const [selectedId, setselectedId] = useState(null);
   const [userInfo, setuserInfo] = useState(null);
+  const router = useRouter();
   useEffect(() => {
     adminReqService
       .getAllUser()
@@ -27,8 +29,140 @@ export default function index() {
   }, []);
 
   const selectedUser = (id) => {
+    setselectedId(id);
     let info = listUser.filter((user) => user.id == id);
     setuserInfo(info[0]);
+  };
+
+  const submitChange = (event) => {
+    event.preventDefault();
+  };
+
+  const [checkUsername, setCheckusername] = useState(false);
+  const [checkpass, setCheckpass] = useState(false);
+  const [checkrepass, setCheckrepass] = useState(false);
+  const [checkrole, setCheckrole] = useState(false);
+  const [checkemail, setCheckemail] = useState(false);
+  const [checksex, setChecksex] = useState(false);
+  const [checkdate_of_birth, setCheckdate_of_birth] = useState(false);
+  const [checkphone, setCheckphone] = useState(false);
+  const [checkfullname, setCheckfullname] = useState(false);
+  const [checkaddress, setCheckaddress] = useState(false);
+
+  function formatDate(input) {
+    var datePart = input.match(/\d+/g),
+      year = datePart[0], // get only two digits
+      month = datePart[1],
+      day = datePart[2];
+
+    return day + "/" + month + "/" + year;
+  }
+
+  const checkValidate = (data) => {
+    let returnValue = 0;
+
+    if (data.username == "") {
+      setCheckusername(true);
+      returnValue = 1;
+    } else {
+      setCheckusername(false);
+    }
+    if (data.password == "") {
+      setCheckpass(true);
+      returnValue = 1;
+    } else {
+      setCheckpass(false);
+    }
+    if (data.repassword != data.password) {
+      setCheckrepass(true);
+      returnValue = 1;
+    } else {
+      setCheckrepass(false);
+    }
+    if (data.role == "") {
+      setCheckrole(true);
+      returnValue = 1;
+    } else {
+      setCheckrole(false);
+    }
+    if (data.email == "") {
+      setCheckemail(true);
+      returnValue = 1;
+    } else {
+      setCheckemail(false);
+    }
+    if (data.dateofbirth == "") {
+      setCheckdate_of_birth(true);
+      returnValue = 1;
+    } else {
+      setCheckdate_of_birth(false);
+    }
+    if (data.phone == "") {
+      setCheckphone(true);
+      returnValue = 1;
+    } else {
+      setCheckphone(false);
+    }
+    if (data.sex == "") {
+      setChecksex(true);
+      returnValue = 1;
+    } else {
+      setChecksex(false);
+    }
+    if (data.address == "") {
+      setCheckaddress(true);
+      returnValue = 1;
+    } else {
+      setCheckaddress(false);
+    }
+    if (data.fullname == "") {
+      setCheckfullname(true);
+      returnValue = 1;
+    } else {
+      setCheckfullname(false);
+    }
+    return returnValue;
+  };
+
+  const submitCreate = (event) => {
+    event.preventDefault();
+    var data = JSON.stringify({
+      username: event.target.username.value,
+      password: event.target.password.value,
+      repassword: event.target.repassword.value,
+      role: event.target.role.value,
+      email: event.target.email.value,
+      dateofbirth: formatDate(event.target.date_of_birth.value).replaceAll(
+        "/",
+        "-"
+      ),
+      sex: event.target.sex.value,
+      phone: event.target.phone.value,
+      fullname: event.target.fullname.value,
+      address: event.target.address.value,
+    });
+    var obj = JSON.parse(data);
+
+    if (checkValidate(obj)) {
+      return;
+    }
+    adminReqService
+      .createAccount(data)
+      .then((res) => {
+        router.reload();
+        toast.notify(`Tạo tài khoản mới thành công`, {
+          title: `Thành Công`,
+          duration: 3,
+          type: "success",
+        });
+      })
+      .catch((err) => {
+        toast.notify(`${err.message}`, {
+          title: `Thất Bại`,
+          duration: 3,
+          type: "error",
+        });
+      });
   };
 
   const renderListUserInTableView = (items) => {
@@ -61,16 +195,348 @@ export default function index() {
     });
   };
 
-  const submitChange = (event) => {
-    event.preventDefault();
-    console.log(event.target.date_of_birth);
+  const renderCheckVali = (isCheck: boolean, message: string = "") => {
+    if (isCheck) {
+      return (
+        <div
+          className="alert alert-danger"
+          style={{ margin: "10px 0", padding: "0 5px" }}
+          role="alert"
+        >
+          <i
+            className="fa fa-times"
+            style={{ padding: "0 5px 0 0" }}
+            aria-hidden="true"
+          ></i>
+          {message}
+        </div>
+      );
+    } else {
+      <></>;
+    }
   };
-  var defaultValue = new Date();
+  const renderCreateUserForm = () => {
+    return (
+      <div
+        className="modal fade"
+        id="createFormModal"
+        tabIndex={-1}
+        role="dialog"
+        aria-labelledby="createFormModalTitle"
+        aria-hidden="true"
+      >
+        <div
+          className=" modal-dialog modal-dialog-centered modal-lg"
+          role="document"
+        >
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLongTitle">
+                Tạo tài khoản
+              </h5>
+              <button
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div className="modal-body">
+              <form onSubmit={submitCreate}>
+                <div className="form-group">
+                  <label htmlFor="fullname">Họ & tên</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="fullname"
+                    name="fullname"
+                    placeholder="Họ & tên"
+                  />
+                  {renderCheckVali(checkfullname, "Vui lòng nhập Họ & tên")}
+                </div>
+                <div className="form-row">
+                  <div className="form-group col-md-6">
+                    <label htmlFor="email">Email</label>
+                    <input
+                      type="email"
+                      name="email"
+                      className="form-control"
+                      id="email"
+                      placeholder="Email"
+                    />
+                    {renderCheckVali(checkemail, "Vui lòng nhập Email")}
+                  </div>
+                  <div className="form-group col-md-6">
+                    <label htmlFor="username">User name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="username"
+                      name="username"
+                      placeholder="User name"
+                    />
+                    {renderCheckVali(checkUsername, "Vui lòng nhập User name")}
+                  </div>
+                </div>
+                <div className="form-row">
+                  <div className="form-group col-md-6">
+                    <label htmlFor="password">Mật khẩu</label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      id="password"
+                      name="password"
+                      placeholder="Mật khẩu"
+                    />
+                    {renderCheckVali(checkpass, "Vui lòng nhập mật khẩu")}
+                  </div>
+                  <div className="form-group col-md-6">
+                    <label htmlFor="password">Nhập lại mật khẩu</label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      id="repassword"
+                      name="repassword"
+                      placeholder="Nhập lại mật khẩu"
+                    />
+                    {renderCheckVali(
+                      checkrepass,
+                      "Các mật khẩu đã nhập không khớp. Hãy thử lại."
+                    )}
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="address">Địa chỉ</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="address"
+                    name="address"
+                    placeholder="1234 Main St"
+                  />
+                  {renderCheckVali(checkaddress, "Vui lòng nhập Địa chỉ")}
+                </div>
+                <div className="form-row">
+                  <div className="form-group col-md-4">
+                    <label htmlFor="phone">Số điện thoại</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="phone"
+                      name="phone"
+                    />
+                    {renderCheckVali(checkphone, "Vui lòng nhập Số điện thoại")}
+                  </div>
+                  <div className="form-group col-md-4">
+                    <label htmlFor="date_of_birth">
+                      Ngày sinh{" "}
+                      <strong>
+                        <i>(dd/mm/yyyy)</i>
+                      </strong>
+                    </label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="date_of_birth"
+                      name="date_of_birth"
+                      defaultValue=""
+                    />
+                    {renderCheckVali(
+                      checkdate_of_birth,
+                      "Vui lòng nhập Ngày sinh"
+                    )}
+                  </div>
+                  <div className="form-group col-md-2">
+                    <label htmlFor="role">Vai trò</label>
+                    <select className="form-control" name="role">
+                      <option value="ADMIN">ADMIN</option>
+                      <option value="EDITOR">EDITOR</option>
+                      <option value="EDITOR">TEACHER</option>
+                    </select>
+                    {renderCheckVali(checkrole, "Vui lòng nhập Vai trò")}
+                  </div>
+                  <div className="form-group col-md-2">
+                    <label htmlFor="sex">Giới tính</label>
+                    <select className="form-control" name="sex">
+                      <option value="Nam">Nam</option>
+                      <option value="Nu">Nữ</option>
+                    </select>
+                    {renderCheckVali(checksex, "Vui lòng nhập Giới tính")}
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-dismiss="modal"
+                  >
+                    Đóng
+                  </button>
+                  <button type="submit" className="btn btn-primary">
+                    Lưu thay đổi
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const [fullname, setfullname] = useState("");
+  const renderFormEdit = (item) => {
+    return (
+      <form onSubmit={submitChange}>
+        <div className="form-group">
+          <label htmlFor="fullname">Họ & tên</label>
+          <input
+            type="text"
+            className="form-control"
+            id="fullname"
+            name="fullname"
+            onChange={(e) => {
+              item.fullname = e.target.value;
+              setuserInfo({ ...item });
+            }}
+            value={userInfo.fullname}
+            placeholder="Họ & tên"
+          />
+        </div>
+        <div className="form-row">
+          <div className="form-group col-md-6">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              name="email"
+              className="form-control"
+              onChange={(e) => {
+                item.email = e.target.value;
+                setuserInfo({ ...item });
+              }}
+              value={userInfo.email}
+              id="email"
+              placeholder="Email"
+            />
+          </div>
+          <div className="form-group col-md-6">
+            <label htmlFor="username">User name</label>
+            <input
+              type="text"
+              className="form-control"
+              id="username"
+              name="username"
+              defaultValue={userInfo.username}
+              placeholder="User name"
+              disabled
+            />
+          </div>
+        </div>
+        <div className="form-group">
+          <label htmlFor="address">Address</label>
+          <input
+            type="text"
+            className="form-control"
+            id="address"
+            name="address"
+            onChange={(e) => {
+              item.address = e.target.value;
+              setuserInfo({ ...item });
+            }}
+            value={userInfo.address}
+            placeholder="1234 Main St"
+          />
+        </div>
+        <div className="form-row">
+          <div className="form-group col-md-4">
+            <label htmlFor="phone">Phone</label>
+            <input
+              type="text"
+              className="form-control"
+              id="phone"
+              name="phone"
+              onChange={(e) => {
+                item.phone = e.target.value;
+                setuserInfo({ ...item });
+              }}
+              value={userInfo.phone}
+  
+            />
+          </div>
+          <div className="form-group col-md-4">
+            <label htmlFor="date_of_birth">
+              Ngày sinh{" "}
+              <strong>
+                <i>(dd/mm/yyyy)</i>
+              </strong>
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="date_of_birth"
+              name="date_of_birth"
+              onChange={(e) => {
+                item.date_of_birth = e.target.value;
+                setuserInfo({ ...item });
+              }}
+              value={userInfo.date_of_birth}
+            />
+          </div>
+          <div className="form-group col-md-2">
+            <label htmlFor="inputState">Vai trò</label>
+            <select
+              id="inputState"
+              className="form-control"
+              onChange={(e) => {
+                item.role = e.target.value;
+                setuserInfo({ ...item });
+              }}
+              value={userInfo.role}
+            >
+              <option value="ADMIN">ADMIN</option>
+              <option value="EDITOR">EDITOR</option>
+              <option value="EDITOR">TEACHER</option>
+            </select>
+          </div>
+          <div className="form-group col-md-2">
+            <label htmlFor="inputState">Giới tính</label>
+            <select
+              id="inputState"
+              className="form-control"
+              onChange={(e) => {
+                item.sex = e.target.value;
+                setuserInfo({ ...item });
+              }}
+              value={userInfo.sex}
+            >
+              <option value="Nam">Nam</option>
+              <option value="Nu">Nữ</option>
+            </select>
+          </div>
+        </div>
+        <div className="modal-footer">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            data-dismiss="modal"
+          >
+            Đóng
+          </button>
+          <button type="submit" className="btn btn-primary">
+            Lưu thay đổi
+          </button>
+        </div>
+      </form>
+    );
+  };
   const renderInfoUser = () => {
     if (!userInfo) {
       return <></>;
     }
-    console.log(userInfo);
+    console.log(userInfo.username);
     return (
       <div
         className="modal fade"
@@ -98,113 +564,7 @@ export default function index() {
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <div className="modal-body">
-              <form onSubmit={submitChange}>
-                <div className="form-group">
-                  <label htmlFor="fullname">Họ & tên</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="fullname"
-                    name="fullname"
-                    defaultValue={userInfo.fullname}
-                    placeholder="Họ & tên"
-                  />
-                </div>
-                <div className="form-row">
-                  <div className="form-group col-md-6">
-                    <label htmlFor="email">Email</label>
-                    <input
-                      type="email"
-                      name="email"
-                      className="form-control"
-                      defaultValue={userInfo.email}
-                      id="email"
-                      placeholder="Email"
-                    />
-                  </div>
-                  <div className="form-group col-md-6">
-                    <label htmlFor="username">User name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="username"
-                      name="username"
-                      defaultValue={userInfo.username}
-                      placeholder="User name"
-                      disabled
-                    />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="address">Address</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="address"
-                    name="address"
-                    defaultValue={userInfo.address}
-                    placeholder="1234 Main St"
-                  />
-                </div>
-                <div className="form-row">
-                  <div className="form-group col-md-4">
-                    <label htmlFor="phone">Phone</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="phone"
-                      name="phone"
-                      defaultValue={userInfo.phone}
-                    />
-                  </div>
-                  <div className="form-group col-md-4">
-                    <label htmlFor="date_of_birth">Ngày sinh <strong><i>(dd/mm/yyyy)</i></strong></label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="date_of_birth"
-                      name="date_of_birth"
-                      defaultValue={userInfo.date_of_birth}
-                    />
-                  </div>
-                  <div className="form-group col-md-2">
-                    <label htmlFor="inputState">Vai trò</label>
-                    <select
-                      id="inputState"
-                      className="form-control"
-                      defaultValue={userInfo.role}
-                    >
-                      <option value="ADMIN">ADMIN</option>
-                      <option value="EDITOR">EDITOR</option>
-                    </select>
-                  </div>
-                  <div className="form-group col-md-2">
-                    <label htmlFor="inputState">Giới tính</label>
-                    <select
-                      id="inputState"
-                      className="form-control"
-                      defaultValue={userInfo.sex}
-                    >
-                      <option value="Nam">Nam</option>
-                      <option value="Nu">Nữ</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    data-dismiss="modal"
-                  >
-                    Close
-                  </button>
-                  <button type="submit" className="btn btn-primary">
-                    Save changes
-                  </button>
-                </div>
-              </form>
-            </div>
+            <div className="modal-body">{renderFormEdit(userInfo)}</div>
           </div>
         </div>
       </div>
@@ -213,6 +573,7 @@ export default function index() {
   return (
     <>
       {renderInfoUser()}
+      {renderCreateUserForm()}
       <AdminTemplate title="Danh sách tài khoản">
         <Head>
           <link
@@ -255,9 +616,9 @@ export default function index() {
                     <div className="add_button ml-10">
                       <a
                         href="#"
-                        data-toggle="modal"
-                        data-target="#addcategory"
                         className="btn_1"
+                        data-toggle="modal"
+                        data-target="#createFormModal"
                       >
                         Tạo tài khoản
                       </a>
