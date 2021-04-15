@@ -858,7 +858,7 @@ table.dataTable tbody th, table.dataTable tbody td {
 }
 
 /* line 597, G:/admin_project/6 admin/marketing/scss/_reset.scss */
-.switch::after {
+/* .switch::after {
   top: 6px;
   left: 6px;
   content: '';
@@ -868,7 +868,7 @@ table.dataTable tbody th, table.dataTable tbody td {
   position: absolute;
   border-radius: 100%;
   transition: 1s;
-}
+} */
 
 /* line 608, G:/admin_project/6 admin/marketing/scss/_reset.scss */
 .switch:checked {

@@ -7,37 +7,13 @@ import adminReqService from "../../src/services/adminService/admin.request.servi
 import { toast } from "react-nextjs-toast";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import authService from "../../src/services/authService/auth.service";
 
 export default function index() {
   const [listUser, setlistUser] = useState(null);
   const [selectedId, setselectedId] = useState(null);
   const [userInfo, setuserInfo] = useState(null);
   const router = useRouter();
-  useEffect(() => {
-    adminReqService
-      .getAllUser()
-      .then((res) => {
-        setlistUser(res.data);
-      })
-      .catch((err) => {
-        toast.notify(`${err.message}`, {
-          title: `Thất Bại`,
-          duration: 3,
-          type: "error",
-        });
-      });
-  }, []);
-
-  const selectedUser = (id) => {
-    setselectedId(id);
-    let info = listUser.filter((user) => user.id == id);
-    setuserInfo(info[0]);
-  };
-
-  const submitChange = (event) => {
-    event.preventDefault();
-  };
-
   const [checkUsername, setCheckusername] = useState(false);
   const [checkpass, setCheckpass] = useState(false);
   const [checkrepass, setCheckrepass] = useState(false);
@@ -48,13 +24,103 @@ export default function index() {
   const [checkphone, setCheckphone] = useState(false);
   const [checkfullname, setCheckfullname] = useState(false);
   const [checkaddress, setCheckaddress] = useState(false);
+  const [currentUser, setcurrentUSer] = useState(null);
+  const [loi, setloi] = useState("");
+
+  useEffect(() => {
+    setcurrentUSer(authService.getUserInfor());
+    adminReqService
+      .getAllUser()
+      .then((res) => {
+        setlistUser(res.data);
+      })
+      .catch((err) => {
+        setloi(err.message);
+        toast.notify(`${err.message}`, {
+          title: `Thất Bại`,
+          duration: 3,
+          type: "error",
+        });
+      });
+  }, []);
+
+  const resetListUser = () => {
+    adminReqService
+      .getAllUser()
+      .then((res) => {
+        setlistUser(res.data);
+      })
+      .catch((err) => {
+        setloi(err.message);
+        toast.notify(`${err.message}`, {
+          title: `Thất Bại`,
+          duration: 3,
+          type: "error",
+        });
+      });
+  };
+  const selectedUser = (id) => {
+    setselectedId(id);
+    let info = listUser.filter((user) => user.id == id);
+    setuserInfo(info[0]);
+  };
+
+  const submitChange = (event) => {
+    event.preventDefault();
+
+    var data = JSON.stringify({
+      email: event.target.email.value,
+      username: event.target.username.value,
+      role: event.target.role.value,
+      sex: event.target.sex.value,
+      dateofbirth: formatDate(event.target.date_of_birth.value).replaceAll(
+        "/",
+        "-"
+      ),
+      phone: event.target.phone.value,
+      fullname: event.target.fullname.value,
+      address: event.target.address.value,
+    });
+    var obj = JSON.parse(data);
+    if (checkValidate(obj)) {
+      return;
+    }
+    adminReqService
+      .updateAccount(data)
+      .then((res) => {
+        adminReqService
+          .getAllUser()
+          .then((res) => {
+            setlistUser(res.data);
+          })
+          .catch((err) => {
+            setloi(err.message);
+            toast.notify(`${err.message}`, {
+              title: `Thất Bại`,
+              duration: 3,
+              type: "error",
+            });
+          });
+        toast.notify(`Cập nhật tài khoản thành công`, {
+          title: `Thành Công`,
+          duration: 3,
+          type: "success",
+        });
+      })
+      .catch((err) => {
+        toast.notify(`${err.message}`, {
+          title: `Thất Bại`,
+          duration: 3,
+          type: "error",
+        });
+      });
+  };
 
   function formatDate(input) {
     var datePart = input.match(/\d+/g),
-      year = datePart[0], // get only two digits
+      day = datePart[0], // get only two digits
       month = datePart[1],
-      day = datePart[2];
-
+      year = datePart[2];
     return day + "/" + month + "/" + year;
   }
 
@@ -149,7 +215,7 @@ export default function index() {
     adminReqService
       .createAccount(data)
       .then((res) => {
-        router.reload();
+        resetListUser();
         toast.notify(`Tạo tài khoản mới thành công`, {
           title: `Thành Công`,
           duration: 3,
@@ -164,6 +230,7 @@ export default function index() {
         });
       });
   };
+  const [isDelete, setisDelete] = useState(false);
 
   const renderListUserInTableView = (items) => {
     if (!items) {
@@ -171,24 +238,102 @@ export default function index() {
     }
     return items.map((item, index) => {
       return (
-        <tr
-          key={index}
-          data-toggle="modal"
-          data-target="#exampleModalCenter"
-          onClick={() => selectedUser(item.id)}
-        >
-          <td>{item.id}</td>
-          <td>{item.username}</td>
-          <td>{item.role}</td>
-          <td>{item.fullname}</td>
-          <td>{item.phone}</td>
-          <td>{item.email}</td>
+        <tr key={index}>
+          <td
+            onClick={() => selectedUser(item.id)}
+            data-toggle="modal"
+            data-target="#exampleModalCenter"
+          >
+            {item.id}
+          </td>
+          <td
+            onClick={() => selectedUser(item.id)}
+            data-toggle="modal"
+            data-target="#exampleModalCenter"
+          >
+            {item.username}
+          </td>
+          <td
+            onClick={() => selectedUser(item.id)}
+            data-toggle="modal"
+            data-target="#exampleModalCenter"
+          >
+            {item.role}
+          </td>
+          <td
+            onClick={() => selectedUser(item.id)}
+            data-toggle="modal"
+            data-target="#exampleModalCenter"
+          >
+            {item.fullname}
+          </td>
+          <td
+            onClick={() => selectedUser(item.id)}
+            data-toggle="modal"
+            data-target="#exampleModalCenter"
+          >
+            {item.phone}
+          </td>
+          <td
+            onClick={() => selectedUser(item.id)}
+            data-toggle="modal"
+            data-target="#exampleModalCenter"
+          >
+            {item.email}
+          </td>
           <td>
-            <span
+            <label className="switch">
+              <input
+                type="checkbox"
+                onChange={(e) => {
+                  if (item.is_delete) {
+                    adminReqService
+                      .enableAccount(item.username)
+                      .then((res) => {
+                        resetListUser();
+                        toast.notify(`Tạo tài khoản mới thành công`, {
+                          title: `Thành Công`,
+                          duration: 3,
+                          type: "success",
+                        });
+                      })
+                      .catch((err) => {
+                        toast.notify(`${err.message}`, {
+                          title: `Thất Bại`,
+                          duration: 3,
+                          type: "error",
+                        });
+                      });
+                  } else {
+                    adminReqService
+                      .disableAccount(item.username)
+                      .then((res) => {
+                        resetListUser();
+                        toast.notify(`Tạo tài khoản mới thành công`, {
+                          title: `Thành Công`,
+                          duration: 3,
+                          type: "success",
+                        });
+                      })
+                      .catch((err) => {
+                        toast.notify(`${err.message}`, {
+                          title: `Thất Bại`,
+                          duration: 3,
+                          type: "error",
+                        });
+                      });
+                  }
+                }}
+                checked={!item.is_delete}
+              />
+              <span className="slider round"></span>
+            </label>
+
+            {/* <span
               className={`badge badge-${item.is_delete ? "danger" : "success"}`}
             >
               {item.is_delete ? "Ngừng Hoạt Động" : "Đang Hoạt Đông"}
-            </span>
+            </span> */}
           </td>
         </tr>
       );
@@ -387,7 +532,6 @@ export default function index() {
     );
   };
 
-  const [fullname, setfullname] = useState("");
   const renderFormEdit = (item) => {
     return (
       <form onSubmit={submitChange}>
@@ -405,6 +549,7 @@ export default function index() {
             value={userInfo.fullname}
             placeholder="Họ & tên"
           />
+          {renderCheckVali(checkfullname, "Vui lòng không để trống Họ & Tên")}
         </div>
         <div className="form-row">
           <div className="form-group col-md-6">
@@ -421,6 +566,7 @@ export default function index() {
               id="email"
               placeholder="Email"
             />
+            {renderCheckVali(checkemail, "Vui lòng không để trống Email")}
           </div>
           <div className="form-group col-md-6">
             <label htmlFor="username">User name</label>
@@ -429,7 +575,11 @@ export default function index() {
               className="form-control"
               id="username"
               name="username"
-              defaultValue={userInfo.username}
+              onChange={(e) => {
+                item.username = e.target.value;
+                setuserInfo({ ...item });
+              }}
+              value={userInfo.username}
               placeholder="User name"
               disabled
             />
@@ -449,6 +599,7 @@ export default function index() {
             value={userInfo.address}
             placeholder="1234 Main St"
           />
+          {renderCheckVali(checkaddress, "Vui lòng không để trống Địa Chỉ")}
         </div>
         <div className="form-row">
           <div className="form-group col-md-4">
@@ -463,14 +614,17 @@ export default function index() {
                 setuserInfo({ ...item });
               }}
               value={userInfo.phone}
-  
             />
+            {renderCheckVali(
+              checkphone,
+              "Vui lòng không để trống Số Điện thoại"
+            )}
           </div>
           <div className="form-group col-md-4">
             <label htmlFor="date_of_birth">
               Ngày sinh{" "}
               <strong>
-                <i>(dd/mm/yyyy)</i>
+                <i>(dd-mm-yyyy)</i>
               </strong>
             </label>
             <input
@@ -484,17 +638,23 @@ export default function index() {
               }}
               value={userInfo.date_of_birth}
             />
+            {renderCheckVali(
+              checkdate_of_birth,
+              "Vui lòng không để trống Ngày Sinh"
+            )}
           </div>
           <div className="form-group col-md-2">
             <label htmlFor="inputState">Vai trò</label>
             <select
               id="inputState"
               className="form-control"
+              name="role"
               onChange={(e) => {
                 item.role = e.target.value;
                 setuserInfo({ ...item });
               }}
               value={userInfo.role}
+              disabled={currentUser.username == item.username}
             >
               <option value="ADMIN">ADMIN</option>
               <option value="EDITOR">EDITOR</option>
@@ -506,6 +666,7 @@ export default function index() {
             <select
               id="inputState"
               className="form-control"
+              name="sex"
               onChange={(e) => {
                 item.sex = e.target.value;
                 setuserInfo({ ...item });
@@ -536,7 +697,6 @@ export default function index() {
     if (!userInfo) {
       return <></>;
     }
-    console.log(userInfo.username);
     return (
       <div
         className="modal fade"
@@ -644,7 +804,9 @@ export default function index() {
                     </table>
                   </div>
                 ) : (
-                  <></>
+                  <div style={{ color: "red", textAlign: "center" }}>
+                    <strong>{loi ? loi : ""}</strong>
+                  </div>
                 )}
               </div>
             </div>
