@@ -56,6 +56,32 @@ class AdminRequestService {
     const uri = `admin/${username}/enable/account`;
     return axiosService.putMethod(uri, null);
   }
+
+  //View all teacher
+  //{{url}}/api/admin/teacher/views
+  getAllTeacher() {
+    const uri = "admin/teacher/views";
+    return axiosService.getMethod(uri);
+  }
+
+  //{{url}}/api/admin/teacher/4/view-detail
+  getDetailTeacher(id) {
+    console.log(id)
+    const uri = `admin/teacher/${id}/view-detail`;
+    return axiosService.getMethod(uri);
+  }
+
+  //{{url}}/api/admin/teacher/create
+  createTeacher(data) {
+    const uri = "admin/teacher/create";
+    return axiosService.postMethod(uri, data);
+  }
+
+  //{{url}}/api/admin/teacher/10/update
+  updateTeacher(id, data) {
+    const uri = `"admin/teacher/${id}/update`;
+    return axiosService.putMethod(uri, data);
+  }
 }
 
 const adminReqService = new AdminRequestService();

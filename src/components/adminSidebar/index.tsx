@@ -48,6 +48,21 @@ const AdminSidebar = () => {
             </li>
           </ul>
         </li>
+        <li>
+          <a className="has-arrow" href="#" aria-expanded="false">
+            <div className="icon_menu">
+              <img src="/img/menu-icon/2.svg" alt="" />
+            </div>
+            <span>Giáo Viên</span>
+          </a>
+          <ul>
+            <li>
+              <Link href="/teacher">
+                <a>Danh sách</a>
+              </Link>
+            </li>
+          </ul>
+        </li>
       </ul>
     </nav>
   );
