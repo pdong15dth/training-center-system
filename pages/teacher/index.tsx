@@ -21,6 +21,9 @@ export default function Index() {
       })
       .catch((err) => {
         setloi(err.message);
+        if (err.message == "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại") {
+          router.push("/login")
+        }
         toast.notify(`${err.message}`, {
           title: `Thất Bại`,
           duration: 3,
@@ -53,13 +56,13 @@ export default function Index() {
           <td onClick={() => selectedTeacher(item.id)}>{item.phone}</td>
           <td onClick={() => selectedTeacher(item.id)}>{item.email}</td>
           <td>
-            {!item.is_delete ? (
+            {!item.is_deleted ? (
               <button className="btn btn-success rounded-pill mb-3">
-                Active
+                Hoạt động
               </button>
             ) : (
               <button className="btn btn-danger rounded-pill mb-3">
-                Active
+                Đã khóa
               </button>
             )}
           </td>
@@ -76,7 +79,6 @@ export default function Index() {
           <div className="white_card_body">
             <div className="QA_section">
               <div className="white_box_tittle list_header">
-                <h4></h4>
                 <div className="box_right d-flex lms_block">
                   <div className="serach_field_2">
                     <div className="search_inner">

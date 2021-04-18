@@ -82,6 +82,57 @@ class AdminRequestService {
     const uri = `admin/teacher/${id}/update`;
     return axiosService.putMethod(uri, data);
   }
+
+  /*** Course API */
+
+  //Get all course Active
+  //{{url}}/api/admin/course/view/active
+  getAllCourseActive() {
+    const uri = `admin/course/view`;
+    return axiosService.getMethod(uri);
+  }
+
+  //Get All course in-active
+  //{{url}}/api/admin/course/view/in-active
+  getAllCourseInactive() {
+    const uri = `admin/course/view/in-active`;
+    return axiosService.getMethod(uri);
+  }
+
+  //Active course
+  //{{url}}/api/admin/course/2/active
+  updateActiveCourse(id) {
+    const uri = `admin/course/${id}/active`;
+    return axiosService.putMethod(uri, null);
+  }
+
+  //Deactive course
+  //{{url}}/api/admin/course/1/in-active
+  updateDeactiveCourse(id) {
+    const uri = `admin/course/${id}/in-active`;
+    return axiosService.putMethod(uri, null);
+  }
+
+  //View detail course
+  //{{url}}/api/admin/course/2/view
+  getDetailCourse(id) {
+    const uri = `admin/course/${id}/view`;
+    return axiosService.getMethod(uri);
+  }
+
+  //Create course
+  //{{url}}/api/admin/course/create
+  createCourse(data) {
+    const uri = "admin/Course/create";
+    return axiosService.postMethod(uri, data);
+  }
+
+  //Update course
+  //{{url}}/api/admin/course/1/update
+  updateCourse(id, data) {
+    const uri = `admin/course/${id}/update`;
+    return axiosService.putMethod(uri, data);
+  }
 }
 
 const adminReqService = new AdminRequestService();

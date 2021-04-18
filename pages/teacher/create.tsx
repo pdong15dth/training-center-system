@@ -18,24 +18,40 @@ Index.getInitialProps = async (ctx: DocumentContext) => {
 
 export default function Index({ props }) {
   const [loi, setloi] = useState("");
+  const [exp, setexp] = useState(true);
+  const [kmsafe, setkmsafe] = useState(true);
   const [errorVal, seterrorVal] = useState({
     fullname: "",
     sex: "",
     dateofbirth: "",
     phone: "",
+    email: "",
     address: "",
     cmnd: "",
+    experience_driver: "",
+    km_safe: "",
   });
   const submitForm = (event) => {
     event.preventDefault();
 
     let valPhoneString = utils.checkPhoneNumber(event.target.phone.value);
     let valCmndString = utils.checkCMNDNumber(event.target.cmnd.value);
+
+    let validExper =
+      event.target.experience_driver.value == "" ||
+      event.target.experience_driver.value < 0;
+    let validkm_safe =
+      event.target.km_safe.value == "" || event.target.km_safe.value < 0;
+
     if (
       valPhoneString !== "" ||
       valCmndString !== "" ||
       event.target.fullname.value == "" ||
-      event.target.address.value == ""
+      event.target.address.value == "" ||
+      event.target.dateofbirth.value == "" ||
+      event.target.email.value == "" ||
+      validExper ||
+      validkm_safe
     ) {
       let err = { ...errorVal };
       err.phone = valPhoneString;
@@ -44,6 +60,21 @@ export default function Index({ props }) {
         event.target.fullname.value == "" ? "Vui lòng nhập Họ & Tên" : "";
       err.address =
         event.target.address.value == "" ? "Vui lòng nhập Địa chỉ" : "";
+      err.email =
+        event.target.email.value == "" ? "Vui lòng nhập Địa chỉ Email" : "";
+
+      err.dateofbirth =
+        event.target.dateofbirth.value == ""
+          ? "Vui lòng nhập Ngày tháng năm sinh"
+          : "";
+
+      err.experience_driver = validExper
+        ? "Số năm lái xe không được bỏ trống và phải lơn hơn 0"
+        : "";
+      err.km_safe = validkm_safe
+        ? "Số năm Km lái xe an toàn không được bỏ trống và phải lơn hơn 0"
+        : "";
+
       seterrorVal(err);
       return;
     } else {
@@ -52,6 +83,9 @@ export default function Index({ props }) {
       err.cmnd = valCmndString;
       err.fullname = "";
       err.address = "";
+      err.dateofbirth = "";
+      err.experience_driver = "";
+      err.km_safe = "";
       seterrorVal(err);
     }
     var data = JSON.stringify({
@@ -63,26 +97,28 @@ export default function Index({ props }) {
       phone: event.target.phone.value,
       address: event.target.address.value,
       cmnd: event.target.cmnd.value,
-      cnsk: event.target.cnsk.value,
-      gplx: event.target.gplx.value,
-      experience_driver: event.target.experience_driver.value,
-      km_safe: event.target.km_safe.value,
-      is_deleted: false,
+      cnsk: event.target.cnsk.checked,
+      gplx: "A1",
+      experience_driver: parseInt(event.target.experience_driver.value),
+      km_safe: parseInt(event.target.km_safe.value),
+      email: event.target.email.value,
+      is_deleted: !event.target.is_deleted.checked,
+      is_contract: event.target.is_contract.checked,
+      is_practice: event.target.is_practice.checked,
     });
+    console.log(data);
 
-    console.log("day la id:", props.query.id)
     adminReqService
-      .updateTeacher(props.query.id, data)
+      .createTeacher( data)
       .then((res) => {
         toast.notify(`Cập nhật thành công`, {
           title: `Thanh Công`,
           duration: 3,
           type: "success",
         });
-
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err);
         setloi(err.message);
         toast.notify(`${err.message}`, {
           title: `Thất Bại`,
@@ -90,7 +126,6 @@ export default function Index({ props }) {
           type: "error",
         });
       });
-    console.log(data);
   };
 
   const renderCheckVali = (message: string = "") => {
@@ -141,6 +176,7 @@ export default function Index({ props }) {
               name="email"
               placeholder="Email"
             />
+            {errorVal.email !== "" ? renderCheckVali(errorVal.email) : <></>}
           </div>
           <div className="form-group col-md-6">
             <label htmlFor="username">Tên đăng nhập</label>
@@ -195,63 +231,126 @@ export default function Index({ props }) {
               name="dateofbirth"
               placeholder="Vd: 12-02-1997"
             />
+            {errorVal.dateofbirth !== "" ? (
+              renderCheckVali(errorVal.dateofbirth)
+            ) : (
+              <></>
+            )}
           </div>
           <div className="form-group col-md-3">
             <label htmlFor="sex">Giới tính</label>
-            <select id="sex" className="form-control" defaultValue={"Nam"}>
+            <select
+              id="sex"
+              className="form-control"
+              defaultValue={"Nam"}
+              name="sex"
+            >
               <option>Nam</option>
               <option>Nữ</option>
             </select>
           </div>
         </div>
+
         <div className="form-group row">
-          <div className="col-sm-12">
-            Chứng nhận sức khỏe:{" "}
-            { true ? (
-              <span className="badge badge-success badge-minwidth">Có</span>
-            ) : (
-              <span className="badge badge-success badge-minwidth">Không</span>
-            )}{" "}
-            <a href="#">Xem hình</a>
+          <label
+            htmlFor="experience_driver"
+            className="col-sm-3 col-form-label"
+          >
+            Số năm lái xe:
+          </label>
+          <div className="col-sm-2">
+            <input
+              type="number"
+              className="form-control"
+              id="experience_driver"
+              placeholder="Số năm"
+              min={0}
+              name="experience_driver"
+            />
           </div>
+          {errorVal.experience_driver != "" ? (
+            renderCheckVali(errorVal.experience_driver)
+          ) : (
+            <></>
+          )}
         </div>
         <div className="form-group row">
-          <div className="col-sm-4">
-            Số năm lái xe:{" "}
-            <span className="badge badge-success badge-minwidth">
-              100 năm
-            </span>
-          </div>
-        </div>
-        <div className="form-group row">
-          <div className="col-sm-4">
+          <label htmlFor="km_safe" className="col-sm-3 col-form-label">
             Số Km lái xe an toàn:{" "}
-            <span className="badge badge-success badge-minwidth">
-              100 km
-            </span>
+          </label>
+          <div className="col-sm-2">
+            <input
+              type="number"
+              className="form-control"
+              id="km_safe"
+              placeholder="Số Km"
+              min={0}
+              name="km_safe"
+            />
           </div>
+          {errorVal.km_safe !== "" ? renderCheckVali(errorVal.km_safe) : <></>}
         </div>
+
         <div className="form-group row">
-          <div className="col-sm-12">
+          <label htmlFor="km_safe" className="col-sm-3 col-form-label">
             Giấy phép lái xe{" "}
-            <strong>
-              <i>
-                <u>Hardcode</u>
-              </i>
-            </strong>
-            : <span className="badge badge-success badge-minwidth">A1</span>{" "}
+          </label>
+          <div className="col-sm-9">
+            <span className="badge badge-success badge-minwidth">A1</span>{" "}
             <span className="badge badge-success badge-minwidth">A2</span>{" "}
             <span className="badge badge-success badge-minwidth">B1</span>{" "}
             <span className="badge badge-success badge-minwidth">B2</span>{" "}
             <a href="#">Xem hình</a>
           </div>
         </div>
+
         <div className="form-group row">
+          <label htmlFor="is_contract" className="col-sm-3 col-form-label">
+            Giáo viên hợp đồng:{" "}
+            <p>On (Hợp đồng) / Off (Chính Thức)</p>
+          </label>
           <div className="col-sm-4">
+            <label className="switch">
+              <input type="checkbox" name="is_contract" defaultChecked />
+              <span className="slider round"></span>
+            </label>
+          </div>
+        </div>
+
+        <div className="form-group row">
+          <label htmlFor="is_practice" className="col-sm-3 col-form-label">
+            Giáo viên có dạy thực hành:{" "}
+          </label>
+          <div className="col-sm-4">
+            <label className="switch">
+              <input type="checkbox" name="is_practice" defaultChecked />
+              <span className="slider round"></span>
+            </label>
+          </div>
+        </div>
+
+        <div className="form-group row">
+          <label htmlFor="cnsk" className="col-sm-3 col-form-label">
+            Chứng nhận sức khỏe:{" "}
+          </label>
+          <div className="col-sm-4">
+            <label className="switch">
+              <input type="checkbox" name="cnsk" defaultChecked />
+              <span className="slider round"></span>
+            </label>
+            <a href="#">Xem hình</a>
+          </div>
+        </div>
+
+        <div className="form-group row">
+          <label htmlFor="km_safe" className="col-sm-3 col-form-label">
             Trạng thái tài khoản:{" "}
-            <span className="badge badge-success badge-minwidth">
-              Đang hoạt động
-            </span>
+          </label>
+          <div className="col-sm-4">
+            <label className="switch">
+              <input type="checkbox" name="is_deleted" defaultChecked />
+              <span className="slider round"></span>
+            </label>
           </div>
         </div>
         <div style={{ color: "red" }}>
@@ -278,9 +377,7 @@ export default function Index({ props }) {
       {AdminHeader("Chi tiết thông tin Giáo Viên")}
       <div className="col-lg-12">
         <div className="white_card card_height_100 mb_30">
-          <div className="card-body">
-            {renderFormInfoTeacher()}
-          </div>
+          <div className="card-body">{renderFormInfoTeacher()}</div>
         </div>
       </div>
     </AdminTemplate>

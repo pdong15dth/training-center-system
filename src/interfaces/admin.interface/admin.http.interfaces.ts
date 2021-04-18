@@ -8,6 +8,7 @@ export type TReqLogin = {
 export type TResData<T> = {
   data: T;
   status: number;
+  message: string;
   isSuccess: boolean;
 };
 

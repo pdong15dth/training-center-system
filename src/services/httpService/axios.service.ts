@@ -79,6 +79,7 @@ class AxiosService {
           resolve({
             data: res.data,
             status: res.status,
+            message: res?.message,
             isSuccess: true,
           });
         })
@@ -87,9 +88,9 @@ class AxiosService {
 
           this.handleError(err);
           reject({
-            message: err.response.data.error,
-            statusCode: err.response.data.status,
-            status: err.response.status,
+            message: err.response?.data.error,
+            statusCode: err.response?.data.status,
+            status: err.response?.status,
           });
         });
     });

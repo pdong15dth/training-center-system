@@ -78,3 +78,23 @@ input:checked + .slider:before {
   min-width: 50px !important;
   padding: 7px 5px 4px 5px;
 }
+
+.background-card-course {
+  color: #856404;
+  background-color: #fff3cd;
+  border-color: #ffeeba;
+}
+
+.header-card-course {
+  color: #c00;
+  font-weight: 700;
+}
+
+.custom-card-create {
+
+  height: 93%!important;
+}
+
+.custom-card-icon {
+ height: 260px;
+}
