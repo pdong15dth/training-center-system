@@ -1,12 +1,12 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import AdminHeader from "../../../src/components/adminHeader";
-import AdminTemplate from "../../../src/containers/AdminTemplate";
-import adminReqService from "../../../src/services/adminService/admin.request.service";
+import AdminHeader from "../../src/components/adminHeader";
+import AdminTemplate from "../../src/containers/AdminTemplate";
+import adminReqService from "../../src/services/adminService/admin.request.service";
 import { toast } from "react-nextjs-toast";
 import { DocumentContext } from "next/document";
-import Loading from "../../../src/components/Loading";
-import utils from "../../../src/components/utils/constant";
+import Loading from "../../src/components/Loading";
+import utils from "../../src/components/utils/constant";
 
 Index.getInitialProps = async (ctx: DocumentContext) => {
   return {
@@ -18,7 +18,6 @@ Index.getInitialProps = async (ctx: DocumentContext) => {
 
 export default function Index({ props }) {
   const [loi, setloi] = useState("");
-  const [teacherInfo, setteacherInfo] = useState(null);
   const [errorVal, seterrorVal] = useState({
     fullname: "",
     sex: "",
@@ -27,22 +26,6 @@ export default function Index({ props }) {
     address: "",
     cmnd: "",
   });
-  useEffect(() => {
-    adminReqService
-      .getDetailTeacher(props.query.id)
-      .then((res) => {
-        setteacherInfo(res.data);
-      })
-      .catch((err) => {
-        setloi(err.message);
-        toast.notify(`${err.message}`, {
-          title: `Thất Bại`,
-          duration: 3,
-          type: "error",
-        });
-      });
-  }, []);
-
   const submitForm = (event) => {
     event.preventDefault();
 
@@ -80,10 +63,10 @@ export default function Index({ props }) {
       phone: event.target.phone.value,
       address: event.target.address.value,
       cmnd: event.target.cmnd.value,
-      cnsk: teacherInfo.cnsk,
-      gplx: teacherInfo.gplx,
-      experience_driver: teacherInfo.experience_driver,
-      km_safe: teacherInfo.km_safe,
+      cnsk: event.target.cnsk.value,
+      gplx: event.target.gplx.value,
+      experience_driver: event.target.experience_driver.value,
+      km_safe: event.target.km_safe.value,
       is_deleted: false,
     });
 
@@ -130,7 +113,7 @@ export default function Index({ props }) {
       <></>;
     }
   };
-  const renderFormInfoTeacher = (user) => {
+  const renderFormInfoTeacher = () => {
     return (
       <form onSubmit={submitForm}>
         <div className="form-group">
@@ -141,7 +124,6 @@ export default function Index({ props }) {
             id="fullname"
             name="fullname"
             placeholder="Họ & Tên"
-            defaultValue={user.fullname}
           />
           {errorVal.fullname !== "" ? (
             renderCheckVali(errorVal.fullname)
@@ -158,7 +140,6 @@ export default function Index({ props }) {
               id="email"
               name="email"
               placeholder="Email"
-              defaultValue={user.email}
             />
           </div>
           <div className="form-group col-md-6">
@@ -169,7 +150,6 @@ export default function Index({ props }) {
               id="username"
               name="username"
               placeholder="Username"
-              defaultValue={user.username}
             />
           </div>
         </div>
@@ -180,7 +160,6 @@ export default function Index({ props }) {
             className="form-control"
             id="address"
             placeholder="Nhập địa chỉ tại đây"
-            defaultValue={user.address}
           />
           {errorVal.address !== "" ? renderCheckVali(errorVal.address) : <></>}
         </div>
@@ -193,7 +172,6 @@ export default function Index({ props }) {
               id="cmnd"
               name="cmnd"
               placeholder="CMND 9 số / 12 số"
-              defaultValue={user.cmnd}
             />
             {errorVal.cmnd !== "" ? renderCheckVali(errorVal.cmnd) : <></>}
           </div>
@@ -204,24 +182,23 @@ export default function Index({ props }) {
               className="form-control"
               id="phone"
               name="phone"
-              defaultValue={user.phone}
+              placeholder="Phone"
             />
             {errorVal.phone !== "" ? renderCheckVali(errorVal.phone) : <></>}
           </div>
           <div className="form-group col-md-3">
-            <label htmlFor="dateofbirth">Ngày sinh</label>
+            <label htmlFor="dateofbirth">Ngày sinh (dd-mm-yyyy)</label>
             <input
               type="text"
               className="form-control"
               id="dateofbirth"
               name="dateofbirth"
-              defaultValue={user.dateofbirth}
-              required
+              placeholder="Vd: 12-02-1997"
             />
           </div>
           <div className="form-group col-md-3">
             <label htmlFor="sex">Giới tính</label>
-            <select id="sex" className="form-control" defaultValue={user.sex}>
+            <select id="sex" className="form-control" defaultValue={"Nam"}>
               <option>Nam</option>
               <option>Nữ</option>
             </select>
@@ -230,7 +207,7 @@ export default function Index({ props }) {
         <div className="form-group row">
           <div className="col-sm-12">
             Chứng nhận sức khỏe:{" "}
-            {user.cnsk == true ? (
+            { true ? (
               <span className="badge badge-success badge-minwidth">Có</span>
             ) : (
               <span className="badge badge-success badge-minwidth">Không</span>
@@ -242,7 +219,7 @@ export default function Index({ props }) {
           <div className="col-sm-4">
             Số năm lái xe:{" "}
             <span className="badge badge-success badge-minwidth">
-              {user.experience_driver} năm
+              100 năm
             </span>
           </div>
         </div>
@@ -250,7 +227,7 @@ export default function Index({ props }) {
           <div className="col-sm-4">
             Số Km lái xe an toàn:{" "}
             <span className="badge badge-success badge-minwidth">
-              {user.km_safe} km
+              100 km
             </span>
           </div>
         </div>
@@ -302,7 +279,7 @@ export default function Index({ props }) {
       <div className="col-lg-12">
         <div className="white_card card_height_100 mb_30">
           <div className="card-body">
-            {teacherInfo ? renderFormInfoTeacher(teacherInfo) : Loading()}
+            {renderFormInfoTeacher()}
           </div>
         </div>
       </div>

@@ -24,6 +24,58 @@ class Utils {
     slug = slug.replace(/\@\-|\-\@|\@/gi, ""); //In slug ra textbox có id “slug”
     return slug;
   }
+
+  formatDate(input) {
+    var datePart = input.match(/\d+/g),
+      day = datePart[0], // get only two digits
+      month = datePart[1],
+      year = datePart[2];
+    return day + "/" + month + "/" + year;
+  }
+
+  checkEmailValid(email) {
+    var vnf_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email !== "") {
+      if (vnf_regex.test(email) == false) {
+        return "Email của bạn không đúng định dạng!";
+      } else {
+        return "";
+      }
+    } else {
+      return "Bạn chưa điền Email!";
+    }
+  }
+
+  checkPhoneNumber(phone) {
+    var vnf_regex = /((09|03|07|08|05)+([0-9]{8})\b)/g;
+    if (phone !== "") {
+      if (vnf_regex.test(phone) == false) {
+        return "Số điện thoại của bạn không đúng định dạng!";
+      } else {
+        return "";
+      }
+    } else {
+      return "Bạn chưa điền số điện thoại!";
+    }
+  }
+
+  checkCMNDNumber(cmnd) {
+    var ar = cmnd.split("");
+    console.log(ar)
+    if (ar.length != 9 && ar.length != 12) {
+      return "CMMD / CCCD của bạn không đúng định dạng!"
+    }
+    var vnf_regex = /(([0-9]{9})\b)/g;
+    if (cmnd !== "") {
+      if (vnf_regex.test(cmnd) == false) {
+        return "CMMD / CCCD của bạn không đúng định dạng!";
+      } else {
+        return "";
+      }
+    } else {
+      return "Bạn chưa điền CMMD / CCCD!";
+    }
+  }
 }
 const utils = new Utils();
 export default utils;

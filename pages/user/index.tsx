@@ -8,6 +8,7 @@ import { toast } from "react-nextjs-toast";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import authService from "../../src/services/authService/auth.service";
+import utils from "../../src/components/utils/constant";
 
 export default function index() {
   const [listUser, setlistUser] = useState(null);
@@ -198,7 +199,7 @@ export default function index() {
       repassword: event.target.repassword.value,
       role: event.target.role.value,
       email: event.target.email.value,
-      dateofbirth: formatDate(event.target.date_of_birth.value).replaceAll(
+      dateofbirth: utils.formatDate(event.target.date_of_birth.value).replaceAll(
         "/",
         "-"
       ),

@@ -4,6 +4,7 @@ import AdminTemplate from "../../src/containers/AdminTemplate";
 import adminReqService from "../../src/services/adminService/admin.request.service";
 import { toast } from "react-nextjs-toast";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 export default function Index() {
   const [listTeacher, setlistTeacher] = useState(null);
@@ -32,11 +33,11 @@ export default function Index() {
     resetListUser();
   }, []);
 
-  const selectedUser = (id) => {
+  const selectedTeacher = (id) => {
     router.push({
-      pathname: '/teacher/info/[id]',
-      query: { pid: id },
-    })
+      pathname: "/teacher/info/[id]",
+      query: { id: id },
+    });
   };
   const renderListUserInTableView = (items) => {
     if (!items) {
@@ -45,53 +46,22 @@ export default function Index() {
     return items.map((item, index) => {
       return (
         <tr key={index}>
-          <td
-            onClick={() => selectedUser(item.id)}
-            data-toggle="modal"
-            data-target="#exampleModalCenter"
-          >
-            {item.id}
-          </td>
-          <td
-            onClick={() => selectedUser(item.id)}
-            data-toggle="modal"
-            data-target="#exampleModalCenter"
-          >
-            {item.username}
-          </td>
-          <td
-            onClick={() => selectedUser(item.id)}
-            data-toggle="modal"
-            data-target="#exampleModalCenter"
-          >
-            {item.role}
-          </td>
-          <td
-            onClick={() => selectedUser(item.id)}
-            data-toggle="modal"
-            data-target="#exampleModalCenter"
-          >
-            {item.fullname}
-          </td>
-          <td
-            onClick={() => selectedUser(item.id)}
-            data-toggle="modal"
-            data-target="#exampleModalCenter"
-          >
-            {item.phone}
-          </td>
-          <td
-            onClick={() => selectedUser(item.id)}
-            data-toggle="modal"
-            data-target="#exampleModalCenter"
-          >
-            {item.email}
-          </td>
+          <td onClick={() => selectedTeacher(item.id)}>{item.id}</td>
+          <td onClick={() => selectedTeacher(item.id)}>{item.username}</td>
+          <td onClick={() => selectedTeacher(item.id)}>{item.role}</td>
+          <td onClick={() => selectedTeacher(item.id)}>{item.fullname}</td>
+          <td onClick={() => selectedTeacher(item.id)}>{item.phone}</td>
+          <td onClick={() => selectedTeacher(item.id)}>{item.email}</td>
           <td>
-            <label className="switch">
-              <input type="checkbox" defaultChecked={!item.is_delete} />
-              <span className="slider round"></span>
-            </label>
+            {!item.is_delete ? (
+              <button className="btn btn-success rounded-pill mb-3">
+                Active
+              </button>
+            ) : (
+              <button className="btn btn-danger rounded-pill mb-3">
+                Active
+              </button>
+            )}
           </td>
         </tr>
       );
@@ -125,14 +95,9 @@ export default function Index() {
                     </div>
                   </div>
                   <div className="add_button ml-10">
-                    <a
-                      href="#"
-                      className="btn_1"
-                      data-toggle="modal"
-                      data-target="#createFormModal"
-                    >
-                      Tạo tài khoản
-                    </a>
+                    <Link href="/teacher/create">
+                      <a className="btn_1">Thêm Giáo Viên</a>
+                    </Link>
                   </div>
                 </div>
               </div>

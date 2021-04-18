@@ -79,7 +79,7 @@ class AdminRequestService {
 
   //{{url}}/api/admin/teacher/10/update
   updateTeacher(id, data) {
-    const uri = `"admin/teacher/${id}/update`;
+    const uri = `admin/teacher/${id}/update`;
     return axiosService.putMethod(uri, data);
   }
 }
