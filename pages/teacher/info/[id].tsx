@@ -135,7 +135,8 @@ export default function Index({ props }) {
             type: "success",
           });
         } else {
-          const data = res.data
+          let data = null
+          data = res.data
           console.log(data.message);
           toast.notify(`${data.message}`, {
             title: `Thất Bại`,
