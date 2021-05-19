@@ -15,23 +15,14 @@ const AdminSidebar = () => {
       </div>
       <ul id="sidebar_menu">
         <li>
-          <a className="has-arrow" href="#" aria-expanded="false">
-            <div className="icon_menu">
-              <img src="/img/menu-icon/dashboard.svg" alt="" />
-            </div>
-            <span>Dashboard</span>
-          </a>
-          <ul>
-            <li>
-              <a href="index.html">Marketing</a>
-            </li>
-            <li>
-              <a href="index_2.html">Default</a>
-            </li>
-            <li>
-              <a href="index_3.html">Dark Menu</a>
-            </li>
-          </ul>
+          <Link href="/" >
+            <a aria-expanded="false">
+              <div className="icon_menu">
+                <img src="/img/menu-icon/dashboard.svg" alt="" />
+              </div>
+              <span>Dashboard</span>
+            </a>
+          </Link>
         </li>
         <li>
           <a className="has-arrow" href="#" aria-expanded="false">
@@ -59,6 +50,21 @@ const AdminSidebar = () => {
             <li>
               <Link href="/teacher">
                 <a>Danh sách</a>
+              </Link>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a className="has-arrow" href="#" aria-expanded="false">
+            <div className="icon_menu">
+              <img src="/img/menu-icon/2.svg" alt="" />
+            </div>
+            <span>Trang Thiết Bị</span>
+          </a>
+          <ul>
+            <li>
+              <Link href="/vehicle">
+                <a>Danh sách Xe</a>
               </Link>
             </li>
           </ul>

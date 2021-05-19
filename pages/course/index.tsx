@@ -1,83 +1,67 @@
-import { useEffect, useState } from "react";
+import Link from "next/link";
 import AdminHeader from "../../src/components/adminHeader";
+import utils from "../../src/components/utils/constant";
 import AdminTemplate from "../../src/containers/AdminTemplate";
-import adminReqService from "../../src/services/adminService/admin.request.service";
-import { toast } from "react-nextjs-toast";
-import Loading from "../../src/components/Loading";
 
 export default function Index() {
-  const [loi, setloi] = useState("");
-  const [courses, setCourses] = useState(null);
+    const renderListCourse = () => {
+        return utils.listCourse.map((item, index) => {
+            return (
+                <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td><Link href={`/course/${item}`}><a>Khoá đào tạo <strong>{item}</strong></a></Link></td>
+                </tr>
+            )
+        })
+    }
+    return <AdminTemplate title="Danh sách hệ đạo tào">
+        {AdminHeader("Danh sách khoá đạo tào")}
+        <div className="col-lg-12">
+            <div className="white_card card_height_100 mb_30 QA_section">
+                <div className="white_card_body">
+                    <div className="QA_section">
+                        <div className="white_box_tittle list_header">
+                            <div className="box_right d-flex lms_block">
+                                <div className="serach_field_2">
+                                    <div className="search_inner">
+                                        <form>
+                                            <div className="search_field">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Tìm kiếm tên khoá đào tạo..."
+                                                />
+                                            </div>
+                                            <button type="submit">
+                                                {" "}
+                                                <i className="ti-search"></i>{" "}
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                {/* <div className="add_button ml-10">
+                                    <Link href="/teacher/create">
+                                        <a className="btn_1">Thêm Khoá Đào tạo</a>
+                                    </Link>
+                                </div> */}
+                            </div>
+                        </div>
 
-  useEffect(() => {
-    adminReqService
-      .getAllCourseActive()
-      .then((res) => setCourses(res?.data))
-      .catch((err) => {
-        setloi(err.message);
-        toast.notify(`${err.message}`, {
-          title: `Thất Bại`,
-          duration: 3,
-          type: "error",
-        });
-      });
-  }, []);
-
-  console.log(courses);
-  const renderCourse = (items) => {
-    return items.map((item, index) => {
-      return (
-        <div className="col-md-4" style={{ cursor: "pointer" }} key={index}>
-          <div className="card mb-3 widget-chart">
-            <div className="icon-wrapper rounded-circle">
-              <div className="icon-wrapper-bg bg-primary"></div>
-              <i className="ti-settings text-primary"></i>
+                        <div className="QA_table table-responsive ">
+                            <table className="table pt-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">STT</th>
+                                        <th scope="col">Tên khoá</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {renderListCourse()}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div className="widget-numbers">
-              <span>{item.name}</span>
-            </div>
-            <div className="widget-subheading text-success">
-              <strong>Ngày bắt đầu: </strong>
-              {item.start_date}
-            </div>
-            <br />
-            <div className="widget-subheading text-danger">
-              <strong>Ngày kết thúc: </strong>
-              {item.end_date}
-            </div>
-            {item.status ? (
-              <div className="widget-description text-success">
-                <span className="pl-1">
-                  <span>Đang hoạt động</span>
-                </span>
-              </div>
-            ) : (
-              <div className="widget-description text-danger">
-                <span className="pl-1">
-                  <span>Đã hoàn thành</span>
-                </span>
-              </div>
-            )}
-          </div>
         </div>
-      );
-    });
-  };
-  return (
-    <AdminTemplate title="Danh sách đào tạo">
-      {AdminHeader("Danh sách đào tạo")}
-      <div className="col-md-4" style={{ cursor: "pointer" }}>
-        <div className="card mb-3 widget-chart custom-card-create">
-          <div className="icon-wrapper rounded-circle custom-card-icon">
-            <div className="icon-wrapper-bg bg-primary"></div>
-            <i className="ti-plus text-primary"></i>
-          </div>
-          <div className="widget-numbers">
-          <span className="text-center">Tạo khóa đào tạo</span>
-          </div>
-        </div>
-      </div>
-      {courses ? renderCourse(courses) : Loading()}
-    </AdminTemplate>
-  );
+    </AdminTemplate>;
 }

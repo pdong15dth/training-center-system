@@ -34,7 +34,7 @@ class LocalStorageService extends LocalStorageKey {
     super();
   }
 
-  clearLocalStorage = (key: string): void => {
+  clearLocalStorage = (): void => {
     localStorage.clear();
   };
 

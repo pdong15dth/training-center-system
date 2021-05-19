@@ -1,10 +1,12 @@
 import Axios, { AxiosResponse, AxiosRequestConfig, AxiosInstance } from "axios";
 import redirect from "nextjs-redirect";
+import Router from 'next/router'
 
 import { TResData } from "../../interfaces/admin.interface/admin.http.interfaces";
 import { axiosContentType } from "../../interfaces/axios.service.interface/axios.service.interface";
 import _authService from "../authService/auth.service";
 import loggerService from "../logger/logger.service";
+import localStorageService from "../localStorage.service/localStorage.service";
 
 class AxiosService {
   private namespace: string = "axios_Service";
@@ -85,7 +87,6 @@ class AxiosService {
         })
         .catch((err: any) => {
           // loggerService.error(this.namespace, "", { ...err });
-
           this.handleError(err);
           reject({
             message: err.response?.data.error,
@@ -103,7 +104,8 @@ class AxiosService {
       // case 400:
       case 401:
       case 403:
-        redirect("/");
+        localStorageService.clearLocalStorage()
+        Router.push('/login')
         break;
       default:
         break;

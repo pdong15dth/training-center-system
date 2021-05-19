@@ -11,7 +11,7 @@ export default function AdminHeader(title) {
           <div className="col-lg-6">
             <div className="dashboard_breadcam text-right">
               <p>
-                <a href="index.html">Dashboard</a>{" "}
+                <a href="index.html">Trang chủ</a>{" "}
                 <i className="fas fa-caret-right"></i> {title}
               </p>
             </div>

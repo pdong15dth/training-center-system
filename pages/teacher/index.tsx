@@ -50,18 +50,16 @@ export default function Index() {
       return (
         <tr key={index}>
           <td onClick={() => selectedTeacher(item.id)}>{item.id}</td>
-          <td onClick={() => selectedTeacher(item.id)}>{item.username}</td>
-          <td onClick={() => selectedTeacher(item.id)}>{item.role}</td>
           <td onClick={() => selectedTeacher(item.id)}>{item.fullname}</td>
           <td onClick={() => selectedTeacher(item.id)}>{item.phone}</td>
           <td onClick={() => selectedTeacher(item.id)}>{item.email}</td>
           <td>
             {!item.is_deleted ? (
-              <button className="btn btn-success rounded-pill mb-3">
+              <button className="btn btn-success rounded-pill">
                 Hoạt động
               </button>
             ) : (
-              <button className="btn btn-danger rounded-pill mb-3">
+              <button className="btn btn-danger rounded-pill">
                 Đã khóa
               </button>
             )}
@@ -110,8 +108,6 @@ export default function Index() {
                     <thead>
                       <tr>
                         <th scope="col">ID</th>
-                        <th scope="col">User name</th>
-                        <th scope="col">Role</th>
                         <th scope="col">Họ & tên</th>
                         <th scope="col">Số điện thoại</th>
                         <th scope="col">Email</th>

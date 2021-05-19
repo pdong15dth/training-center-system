@@ -76,6 +76,18 @@ class Utils {
       return "Bạn chưa điền CMMD / CCCD!";
     }
   }
-}
+  checkEmptyString(string) {
+    if (string == "") {
+      return "Vui lòng không bỏ trống trường này!"
+    }
+    return ""
+  }
+  checkIsValidCourse(name) {
+    return utils.listCourse.indexOf(name)
+  }
+  listCourse = ["B2", "C", "D", "E", "F"]
+};
+
+
 const utils = new Utils();
 export default utils;

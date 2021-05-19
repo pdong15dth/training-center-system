@@ -125,6 +125,7 @@ export default function index() {
     return day + "/" + month + "/" + year;
   }
 
+
   const checkValidate = (data) => {
     let returnValue = 0;
 
@@ -329,12 +330,6 @@ export default function index() {
               />
               <span className="slider round"></span>
             </label>
-
-            {/* <span
-              className={`badge badge-${item.is_delete ? "danger" : "success"}`}
-            >
-              {item.is_delete ? "Ngừng Hoạt Động" : "Đang Hoạt Đông"}
-            </span> */}
           </td>
         </tr>
       );

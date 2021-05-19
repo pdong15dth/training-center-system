@@ -20,7 +20,6 @@ const AdminTemplate: React.FC<T_AdminTemplateProps> = ({
   ...props
 }) => {
   const router = useRouter();
-
   useEffect(() => {
     const isAdmin = authService.checkAuthAdmin();
     if (!isAdmin) {

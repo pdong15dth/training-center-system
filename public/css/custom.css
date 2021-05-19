@@ -8,6 +8,7 @@
   color: #000000;
 }
 
+
 .switch {
   position: relative;
   display: inline-block;
@@ -26,6 +27,12 @@
   width: 0;
   height: 0;
 }
+
+.clear-padding-switch {
+  padding: 0 !important;
+  margin-right: 0 !important;
+}
+
 
 .slider {
   position: absolute;

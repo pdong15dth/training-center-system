@@ -5,6 +5,7 @@ import authService from "../../services/authService/auth.service";
 import { toast } from "react-nextjs-toast";
 import _authService from "../../services/authService/auth.service";
 import Link from "next/link";
+import localStorageService from "../../services/localStorage.service/localStorage.service";
 
 const AdminTopBar = () => {
   const router = useRouter();
@@ -15,10 +16,11 @@ const AdminTopBar = () => {
     setuserInfo(authService.getUserInfor());
   }, []);
   const handleLogout = () => {
+    localStorageService.clearLocalStorage()
+    router.push("/login")
     adminReqService
       .logoutMethod()
       .then((res) => {
-        router.push("/login")
         toast.notify(`Đã đăng xuất`, {
           title: `Thành Công`,
           duration: 3,
