@@ -25,19 +25,29 @@ async function refetchListStudent(id) {
 }
 
 export default function Index({ props }) {
+  const suggestions = ["Apple", "Air", "Asia", "Mumbai", "Kolkata", "Banana"]
 
+  const [tagSelected, setTagSelected] = useState(null)
+  const [tags, setTags] = useState([])
   const [listStudent, setListStudent] = useState(null)
   const [detailClass, setdetailClass] = useState(null)
   const [isLoading, setisLoading] = useState(true)
   const [loi, setloi] = useState("");
   const router = useRouter()
   const [errorVal, seterrorVal] = useState({
-    name: "",
-    start_date: "",
-    graduation_date: "",
+    id_class: 0,
+    fullname: "",
+    date_of_birth: "",
+    phone: "",
+    address: "",
+    cmnd: "",
+    experience_driver: "",
+    km_safe: "",
+    amount: null
   });
 
   useEffect(() => {
+
     adminReqService.getDetailCourse(props.query.id).then(res => {
       setdetailClass(res?.data)
       setisLoading(false)
@@ -64,34 +74,71 @@ export default function Index({ props }) {
   const onSubmitCreateCourse = (event) => {
     event.preventDefault();
 
-    var name = utils.checkEmptyString(event.target.name.value)
-    var checkstart_date = utils.checkEmptyString(event.target.start_date.value)
-    var checkgraduation_date = utils.checkEmptyString(event.target.graduation_date.value)
-    if (name != "" || checkstart_date != "" || checkgraduation_date != "") {
+    var fullname = utils.checkEmptyString(event.target.fullname.value)
+    // var checkEmail = utils.checkEmailValid(event.target.email.value)
+    var checkPhone = utils.checkPhoneNumber(event.target.phone.value)
+    var checkAddress = utils.checkEmptyString(event.target.address.value)
+    var checkCmnd = utils.checkCMNDNumber(event.target.cmnd.value)
+    let validExper =
+      event.target.experience_driver.value == "" ||
+      event.target.experience_driver.value < 0;
+    let validkm_safe =
+      event.target.km_safe.value == "" || event.target.km_safe.value < 0;
 
+    if (fullname != "" || checkPhone != "" || checkAddress != "" || checkCmnd != "") {
       let err = { ...errorVal };
-      err.name = name
-      err.start_date = checkstart_date
-      err.graduation_date = checkgraduation_date
-      seterrorVal(err);
+      err.phone = checkPhone
+      err.address = checkAddress
+      err.cmnd = checkCmnd
+      err.date_of_birth =
+        event.target.date_of_birth.value == ""
+          ? "Vui lòng nhập Ngày tháng năm sinh"
+          : "";
+
+      err.experience_driver = validExper
+        ? "Số năm lái xe không được bỏ trống và phải lơn hơn 0"
+        : "";
+      err.km_safe = validkm_safe
+        ? "Số năm Km lái xe an toàn không được bỏ trống và phải lơn hơn 0"
+        : "";
+        seterrorVal(err);
       return;
     } else {
       let err = {
-        name: "",
-        start_date: "",
-        graduation_date: "",
+        id_class: 0,
+        fullname: "",
+        date_of_birth: "",
+        phone: "",
+        address: "",
+        cmnd: "",
+        experience_driver: "",
+        km_safe: "",
+        amount: null
       }
       seterrorVal(err);
     }
+
     var data = JSON.stringify({
-      "name": event.target.name.value,
-      "start_date": event.target.start_date.value,
-      "graduation_date": event.target.graduation_date.value,
-      "training_system": event.target.training_system.value,
-      "time": event.target.time.value
+      "id_class": parseInt(props.query.idClass),
+      "full_name": event.target.fullname.value,
+      "email": event.target.email.value,
+      "sex": "Nam",
+      "date_of_birth": utils
+        .formatDate(event.target.date_of_birth.value)
+        .replaceAll("/", "-"),
+      "phone": event.target.phone.value,
+      "address": event.target.address.value,
+      "cmnd": event.target.cmnd.value,
+      "cnsk": true,
+      "gplx": tags.toString(),
+      "exp": parseInt(event.target.experience_driver.value),
+      "number_of_km": parseInt(event.target.km_safe.value),
+      "id_role": 1,
+      "amount": parseInt(event.target.amount.value)
     });
 
-    adminReqService.createCourse(data).then((res) => {
+    console.log(data)
+    adminReqService.createStudentInClass(data).then((res) => {
       refetchListStudent(props.query.id).then(res => {
         setListStudent(res)
       }).catch(err => {
@@ -124,30 +171,219 @@ export default function Index({ props }) {
     )
   }
 
+  const listTags = (tags) => {
+    console.log("dong ne", tags.length)
+    return (
+      <div className={`col-sm-${tags.length}`}>
+        {tags.map((tag, index) => {
+          return (
+            <>
+              <span key={index} className="badge badge-success badge-minwidth">{tag}</span>{" "}
+            </>
+          )
+        })}
+      </div>
+    )
+  }
+
+  const choooseTag = () => {
+
+  }
   const renderContentForm = (detailClass) => {
     return (
       <form onSubmit={onSubmitCreateCourse}>
+        <div className="form-group">
+          <label htmlFor="fullname">Họ & Tên</label>
+          <input
+            type="text"
+            className="form-control"
+            id="fullname"
+            name="fullname"
+            placeholder="Họ & Tên"
+          />
+          {ErrorValid(errorVal.fullname)}
+        </div>
+        <div className="form-row">
+          <div className="form-group col-md-6">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              className="form-control"
+              id="email"
+              name="email"
+              placeholder="Email"
+            />
+          </div>
+          <div className="form-group col-md-6">
+            <label htmlFor="phone">Số điện thoại</label>
+            <input
+              type="text"
+              className="form-control"
+              id="phone"
+              name="phone"
+              placeholder="Số điện thoại"
+            />
+            {ErrorValid(errorVal.phone)}
+
+          </div>
+        </div>
+        <div className="form-group">
+          <label htmlFor="address">Địa chỉ</label>
+          <input
+            type="text"
+            className="form-control"
+            id="address"
+            placeholder="Nhập địa chỉ tại đây"
+          />
+          {ErrorValid(errorVal.address)}
+        </div>
         <div className="form-row">
           <div className="form-group col-md-4">
-            <label htmlFor="name">Mã khoá học</label>
-            <input type="name" className="form-control" id="name" placeholder="Nhập Mã khoá học" defaultValue={`detailClass.code`} />
-            {ErrorValid(errorVal.name)}
+            <label htmlFor="cmnd">CMND/CCCD</label>
+            <input
+              type="text"
+              className="form-control"
+              id="cmnd"
+              name="cmnd"
+              placeholder="CMND 9 số / 12 số"
+            />
+            {ErrorValid(errorVal.cmnd)}
           </div>
+          <div className="form-group col-md-4">
+            <label htmlFor="date_of_birth">Ngày sinh (dd-mm-yyyy)</label>
+            <input
+              type="text"
+              className="form-control"
+              id="date_of_birth"
+              name="date_of_birth"
+              placeholder="Vd: 12-02-1997"
+            />
+            {ErrorValid(errorVal.date_of_birth)}
+          </div>
+          <div className="form-group col-md-4">
+            <label htmlFor="sex">Giới tính</label>
+            <select
+              id="sex"
+              className="form-control"
+              defaultValue={"Nam"}
+              name="sex"
+            >
+              <option>Nam</option>
+              <option>Nữ</option>
+            </select>
+          </div>
+        </div>
 
-        </div>
-        <div className="form-row">
-          <div className="form-group col-md-6">
-            <label htmlFor="start_date">Ngày bắt đầu (dd-MM-yyyy)</label>
-            <input type="text" className="form-control" id="start_date" placeholder="Nhập ngày bắt đầu" defaultValue={"detail.start_date"} />
-            {ErrorValid(errorVal.start_date)}
+        <div className="form-group row">
+          <label
+            htmlFor="experience_driver"
+            className="col-sm-3 col-form-label"
+          >
+            Số năm lái xe:
+        </label>
+          <div className="col-sm-2">
+            <input
+              type="number"
+              className="form-control"
+              id="experience_driver"
+              placeholder="Số năm"
+              min={0}
+              name="experience_driver"
+            />
           </div>
-          <div className="form-group col-md-6">
-            <label htmlFor="graduation_date">Ngày tốt nghiệp (dd-MM-yyyy)</label>
-            <input type="text" className="form-control" id="graduation_date" placeholder="Nhập ngày tốt nghiệp" defaultValue={"detail.graduation_date"} />
-            {ErrorValid(errorVal.graduation_date)}
+          {ErrorValid(errorVal.experience_driver)}
+        </div>
+        <div className="form-group row">
+          <label htmlFor="km_safe" className="col-sm-3 col-form-label">
+            Số Km lái xe an toàn:{" "}
+          </label>
+          <div className="col-sm-2">
+            <input
+              type="number"
+              className="form-control"
+              id="km_safe"
+              placeholder="Số Km"
+              min={0}
+              name="km_safe"
+            />
+          </div>
+          {ErrorValid(errorVal.km_safe)}
+        </div>
+
+        <div className="form-group row">
+          <label htmlFor="km_safe" className="col-sm-3 col-form-label">
+            Giấy phép lái xe hiện có:{" "}
+          </label>
+          {listTags(tags)}
+          <div className="col-sm-4">
+            <div className="input-group">
+              <select className="custom-select" id="inputGroupSelect04" aria-label="Example select with button addon" onChange={(newTags) => setTagSelected(newTags.target.value)}>
+                <option value={``}>Loại bằng</option>
+                {utils.listCourse.map((item, index) => {
+                  return <option key={index} value={`${item}`}>{item}</option>
+                })}
+              </select>
+              <div className="input-group-append">
+                <button className="btn btn-light" type="button" onClick={() => {
+                  var newTags = [...tags]
+                  var index = newTags.indexOf(tagSelected);
+                  if (index == -1 && tagSelected != null && tagSelected != "") {
+                    newTags.push(tagSelected)
+                  }
+                  setTags(newTags)
+                  console.log("tasg", newTags)
+                }}>Chọn</button>
+              </div>
+            </div>
           </div>
         </div>
-        <button type="submit" className="btn btn-primary">Đồng ý</button>
+
+        <div className="form-group row">
+          <label htmlFor="cnsk" className="col-sm-3 col-form-label">
+            Chứng nhận sức khỏe:{" "}
+          </label>
+          <div className="col-sm-4">
+            <label className="switch">
+              <input type="checkbox" name="cnsk" defaultChecked />
+              <span className="slider round"></span>
+            </label>
+            <a href="#">Xem hình</a>
+          </div>
+        </div>
+        <div className="form-group row">
+          <label
+            htmlFor="experience_driver"
+            className="col-sm-3 col-form-label"
+          >
+            Tiền học phí đã đóng:
+        </label>
+          <div className="col-sm-3">
+            <input
+              type="text"
+              className="form-control"
+              id="amount"
+              placeholder="Số tiền"
+              min={0}
+              name="amount"
+            />
+          </div>
+        </div>
+        <div style={{ color: "red" }}>
+          <strong>
+            {loi ? (
+              <>
+                <hr />
+                {loi}
+                <hr />
+              </>
+            ) : (
+              ""
+            )}
+          </strong>
+        </div>
+        <button type="submit" className="btn btn-primary">
+          Lưu thay đổi
+      </button>
       </form>
 
     )
@@ -263,7 +499,6 @@ export default function Index({ props }) {
     }
 
     return listStudent?.map((item, index) => {
-      console.log(router)
       return (
         <tr key={index}>
           <td>{item.id}</td>
@@ -271,10 +506,6 @@ export default function Index({ props }) {
           <td>
             <button className="btn btn-danger rounded-pill" onClick={() => deleteClass(item)}>
               <i className="ti-pencil"></i>{" "}Xoá
-              </button>
-            {" "}
-            <button className="btn btn-success rounded-pill" onClick={() => gotoAddStudent(item)}>
-              <i className="ti-pencil"></i>{" "}Thêm HV
               </button>
           </td>
         </tr>

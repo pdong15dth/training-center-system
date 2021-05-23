@@ -1,5 +1,5 @@
 class Utils {
-  constructor() {}
+  constructor() { }
   baseURL: string = "https://api.hellobugs.dev";
   ChangeToSlug(slug) {
     //Đổi chữ hoa thành chữ thường
@@ -44,6 +44,11 @@ class Utils {
     } else {
       return "Bạn chưa điền Email!";
     }
+  }
+
+  checkStringIsNumber(value) {
+    const result = /^-?\d+$/.test(value)
+    return result ? "" : "Vui lòng nhập tiền với định dạng là số";
   }
 
   checkPhoneNumber(phone) {

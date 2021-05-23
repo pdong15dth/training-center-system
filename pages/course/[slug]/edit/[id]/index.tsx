@@ -327,7 +327,7 @@ export default function Index({ props }) {
       router.push({
         pathname: `${router.asPath}/add-student`,
         query: {
-          id: row.id,
+          idClass: row.id,
           code: row.code
         }
       })
