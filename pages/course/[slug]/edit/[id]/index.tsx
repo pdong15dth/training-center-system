@@ -338,7 +338,7 @@ export default function Index({ props }) {
       return (
         <tr key={index}>
           <td>{item.id}</td>
-          <td><Link href={`/course/${router.query.slug}/edit/${router.query.id}/add-student`}><a>Mã lớp: {item.code}</a></Link></td>
+          <td onClick={() => gotoAddStudent(item)}><Link href={``}><a>Mã lớp: {item.code}</a></Link></td>
           <td>
             <button className="btn btn-danger rounded-pill" onClick={() => deleteClass(item)}>
               <i className="ti-pencil"></i>{" "}Xoá

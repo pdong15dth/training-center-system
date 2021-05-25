@@ -31,9 +31,11 @@ export default function Index({ props }) {
   const [tags, setTags] = useState([])
   const [listStudent, setListStudent] = useState(null)
   const [detailClass, setdetailClass] = useState(null)
+  const [detailStudent, setdetailStudent] = useState(null)
   const [isLoading, setisLoading] = useState(true)
   const [loi, setloi] = useState("");
   const router = useRouter()
+  const [path, setpath] = useState(props.query.asPath)
   const [errorVal, seterrorVal] = useState({
     id_class: 0,
     fullname: "",
@@ -46,8 +48,30 @@ export default function Index({ props }) {
     amount: null
   });
 
-  useEffect(() => {
+  const getStudent = (id) => {
+    var path = `${router.asPath}`
+    
+    router.push({
+      pathname: path,
+      query: {
+        edit: true,
+        idStudent: id
+      }
+    })
+    // adminReqService.getDetailStudent(id).then(res => {
+    //   setdetailStudent(res?.data)
+    // }).catch(err => {
+    //   setloi(err.message);
+    //   toast.notify(`${err.message}`, {
+    //     title: `Thất Bại`,
+    //     duration: 3,
+    //     type: "error",
+    //   });
+    // })
+  }
 
+  useEffect(() => {
+    // router.push(path)
     adminReqService.getDetailCourse(props.query.id).then(res => {
       setdetailClass(res?.data)
       setisLoading(false)
@@ -200,6 +224,7 @@ export default function Index({ props }) {
             id="fullname"
             name="fullname"
             placeholder="Họ & Tên"
+            value={detailStudent?.full_name}
           />
           {ErrorValid(errorVal.fullname)}
         </div>
@@ -502,7 +527,10 @@ export default function Index({ props }) {
       return (
         <tr key={index}>
           <td>{item.id}</td>
-          <td><Link href={`/course/${router.query.slug}/edit/${router.query.id}/add-student`}><a>{item.full_name}</a></Link></td>
+          <td onClick={() => {
+            setpath(`${router.asPath}?edit=true?idStudent=${item.id}`)
+            router.replace(path)
+          }}><Link href="#"><a>{item.full_name}</a></Link></td>
           <td>
             <button className="btn btn-danger rounded-pill" onClick={() => deleteClass(item)}>
               <i className="ti-pencil"></i>{" "}Xoá
